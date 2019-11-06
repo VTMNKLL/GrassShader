@@ -16,7 +16,7 @@
 // Upgrade NOTE: excluded shader from DX11; has structs without semantics (struct v2f members _MainTex_ST)
 #pragma exclude_renderers d3d11
         // Physically based Standard lighting model, and enable shadows on all light types
-        #pragma surface surf Standard fullforwardshadows vertex:vert
+        #pragma surface surf Standard fullforwardshadows //vertex:vert
 
         // Use shader model 3.0 target, to get nicer looking lighting
         #pragma target 3.0
@@ -40,7 +40,7 @@
 
 		struct Input
 		{
-			float4 vertex;
+			//float4 vertex;
 			float2 uv_MainTex;
 			//float4 color;
 		};
@@ -59,18 +59,18 @@
         UNITY_INSTANCING_BUFFER_END(Props)
 
 
-		void vert(inout appdata_full v, out Input v2f)
-		{
-			UNITY_INITIALIZE_OUTPUT(Input, v2f);
+		//void vert(inout appdata_full v, out Input v2f)
+		//{
+		//	UNITY_INITIALIZE_OUTPUT(Input, v2f);
 
-			v2f.vertex = UnityObjectToClipPos(v.vertex);
-			
-			float2 tex = TRANSFORM_TEX(v.texcoord, _MainTex);
-			v2f.uv_MainTex = tex;
-			//o.color = v.color;
-			//UNITY_TRANSFER_FOG(o,o.vertex);
-			//return o;
-		}
+		//	v2f.vertex = UnityObjectToClipPos(v.vertex);
+		//	
+		//	float2 tex = TRANSFORM_TEX(v.texcoord, _MainTex);
+		//	v2f.uv_MainTex = tex;
+		//	//o.color = v.color;
+		//	//UNITY_TRANSFER_FOG(o,o.vertex);
+		//	//return o;
+		//}
 
         void surf (Input IN, inout SurfaceOutputStandard o)
         {

@@ -60,7 +60,7 @@
 
                 // apply fog
                 //UNITY_APPLY_FOG(i.fogCoord, col);
-                return fixed4(vec,0.0f,1.0f);
+                return fixed4(vec,0.0f,col.a);
             }
             ENDCG
         }
