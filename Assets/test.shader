@@ -9,9 +9,14 @@ Shader "Custom/test"
       _BendStrength ("GrassHeight", float ) = 1
     }
     SubShader {
+Cull off
       Tags { "RenderType" = "Opaque" }
       CGPROGRAM
       #pragma surface surf Lambert vertex:vert addshadow fullforwardshadows
+
+      
+      
+     
 
       struct Input {
           float2 uv_MainTex;
@@ -90,6 +95,6 @@ Shader "Custom/test"
           // o.Albedo = float3( bendStrength, 0, 0 );
       }
       ENDCG
-    } 
+    }
     Fallback "Diffuse"
 }
