@@ -11,7 +11,7 @@ Shader "Custom/test"
     SubShader {
       Tags { "RenderType" = "Opaque" }
       CGPROGRAM
-      #pragma surface surf Lambert vertex:vert
+      #pragma surface surf Lambert vertex:vert addshadow fullforwardshadows
 
       struct Input {
           float2 uv_MainTex;
@@ -42,14 +42,14 @@ Shader "Custom/test"
              return mul(tm, p);
         }
 
-      void vert (inout appdata_full v, out Input o) {
+      void vert (inout appdata_base v, out Input o) {
           UNITY_INITIALIZE_OUTPUT(Input,o);
           float4 worldPos = mul( unity_ObjectToWorld, v.vertex );
           o.pos = worldPos;
           // o.vertex = v.vertex;
           float2 rtUVs    = ( worldPos.xz - G_RTCameraPosition.xz ) / ( 2 * G_RTCameraSize ) + float2( .5f, .5f );
           float4 tmp      = tex2Dlod( _RenderTex, float4( rtUVs, 0, 0 ) );
-          float3 bendDir  = float3( tmp.x, 0.00001, tmp.y );
+          float3 bendDir  = float3( tmp.x + 0.0001, 0.0001, tmp.y );
           float bendStrength = tmp.a * _BendStrength;
           bendDir         = normalize( bendDir );
           bendDir         = mul( unity_WorldToObject, float4( bendDir, 0 ) ).xyz; // maaaaaybe inv(transpose(4x4 mat));
@@ -60,18 +60,21 @@ Shader "Custom/test"
           float bendAngle = bendStrength * normalizedHeight;
 
           float3 bendAxis = normalize( cross( float3( 0, 1, 0 ), bendDir ) );
+          //bendAxis = float3( 1, 0, 0 );
 
-          //v.vertex.xyz = RotateAboutAxis( v.vertex.xyz, bendAxis, bendAngle );
-          v.vertex.xyz += bendDir;
-          v.vertex.w = 1;
+          //bendAngle = 3.14159 / 4;
+          if (bendDir.y < .4 )
+            v.vertex.xyz = RotateAboutAxis( v.vertex.xyz, bendAxis, bendAngle );
+          //v.vertex.xyz += bendDir;
+          //v.vertex.w = 1;
           //o.color.rgb  = float3( bendStrength, 0, 0 );
-          o.color.rgb  = bendAxis;
+          o.color.rgb = 5.*bendAxis + float3(.5,.5,.5);
       }
 
 
       void surf (Input IN, inout SurfaceOutput o) {
-          // o.Albedo = tex2D( _MainTex, IN.uv_MainTex ).rgb * IN.color.rgb;
-          o.Albedo = IN.color.rgb;
+          o.Albedo = tex2D( _MainTex, IN.uv_MainTex ).rgb * IN.color.rgb;
+          o.Albedo = float3( 0, 1, 0 );
 
           // float2 rtUVs    = ( IN.pos.xz - G_RTCameraPosition.xz ) / ( 2 * G_RTCameraSize ) + float2( .5f, .5f );
           // float4 tmp      = tex2D( _RenderTex, rtUVs );
