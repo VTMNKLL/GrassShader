@@ -14,11 +14,8 @@ Cull off
       CGPROGRAM
       #pragma surface surf Lambert vertex:vert addshadow fullforwardshadows
 
-      
-      
-     
-
-      struct Input {
+      struct Input
+      {
           float2 uv_MainTex;
           float4 pos;
           // float4 vertex;
@@ -33,24 +30,42 @@ Cull off
       float _GrassHeight;
       float _BendStrength;
 
-      float3 RotateAboutAxis(float3 p, float3 u, float angle) {
-            float c = cos(angle);
-            float s = sin(angle);
+      float3 RotateAboutAxis( float3 p, float3 u, float angle )
+      {
+            float c = cos( angle );
+            float s = sin( angle );
             float cr = 1-c;
             float sr = 1-s;
             float3x3 tm = float3x3(
-                 float3(c + u.x*u.x*cr,     u.x*u.y*cr - u.z*s,  u.x*u.z*cr + u.y*s),
-                 float3(u.y*u.x*cr + u.z*s,   c + u.y*u.y*cr,    u.y*u.z*cr - u.x*s),
-                 float3(u.z*u.x*cr - u.y*s,   u.z*u.y*cr + u.x*s,  c + u.z*u.z*cr)
+                 float3( c + u.x*u.x*cr,     u.x*u.y*cr - u.z*s, u.x*u.z*cr + u.y*s ),
+                 float3( u.y*u.x*cr + u.z*s, c + u.y*u.y*cr,     u.y*u.z*cr - u.x*s ),
+                 float3( u.z*u.x*cr - u.y*s, u.z*u.y*cr + u.x*s, c + u.z*u.z*cr )
              );
 
-             return mul(tm, p);
-        }
+             return mul( tm, p );
+      }
 
-      void vert (inout appdata_base v, out Input o) {
+      float3 RotateAroundYInDegrees(float3 vertex, float degrees)
+      {
+          float alpha = degrees;// *UNITY_PI / 180.0;
+          float sina, cosa;
+          sincos(alpha, sina, cosa);
+          float2x2 m = float2x2(cosa, sina, -sina, cosa);
+          //return float3(mul(m, vertex.xz), vertex.y).xzy;
+          return float3(mul(m, vertex.xz), vertex.y).xzy;
+      }
+
+      void vert( inout appdata_base v, out Input o )
+      {
           UNITY_INITIALIZE_OUTPUT(Input,o);
           float4 worldPos = mul( unity_ObjectToWorld, v.vertex );
           o.pos = worldPos;
+
+          float2 camToWorldPosDir = -normalize( worldPos.xz - _WorldSpaceCameraPos.xz );
+          float billboardAngle    = atan2( camToWorldPosDir.x, camToWorldPosDir.y );
+          v.vertex.xyz = RotateAroundYInDegrees( v.vertex.xyz, billboardAngle );
+          worldPos = mul( unity_ObjectToWorld, v.vertex );
+
           // o.vertex = v.vertex;
           float2 rtUVs    = ( worldPos.xz - G_RTCameraPosition.xz ) / ( 2 * G_RTCameraSize ) + float2( .5f, .5f );
           float4 tmp      = tex2Dlod( _RenderTex, float4( rtUVs, 0, 0 ) );
@@ -77,7 +92,8 @@ Cull off
       }
 
 
-      void surf (Input IN, inout SurfaceOutput o) {
+      void surf( Input IN, inout SurfaceOutput o )
+      {
           o.Albedo = tex2D( _MainTex, IN.uv_MainTex ).rgb * IN.color.rgb;
           o.Albedo = float3( 0, 1, 0 );
 
