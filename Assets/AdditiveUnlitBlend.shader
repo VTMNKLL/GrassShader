@@ -3,6 +3,7 @@
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _RenderTex ("RenderTex", 2D) = "black" {}
     }
     SubShader
     {
@@ -13,6 +14,7 @@
         {
 
 			Blend One One
+            BlendOp Add, Max
 		
             CGPROGRAM
             #pragma vertex vert
@@ -38,6 +40,7 @@
             };
 
             sampler2D _MainTex;
+            sampler2D _RenderTex;
             float4 _MainTex_ST;
 
             v2f vert (appdata v)
@@ -54,6 +57,10 @@
             {
                 // sample the texture
                 fixed4 col = tex2D(_MainTex, i.uv);
+
+                //float2 rtUVs = ( worldPos.xz - G_RTCameraPosition.xz ) / ( 2 * G_RTCameraSize ) + float2( .5f, .5f );
+                //fixed4 currentBend = tex2D(_RenderTex, rtUVs);
+
 				float2 vec = col.rg;
 				vec -= float2(.5f,.5f);
 				vec *= 2.0f * col.a * i.color.a;

@@ -1,0 +1,19 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> bendTexture;
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+
+    // bendTexture[id.xy] = float4( 1.0, 1.0, 1.0, 0.5 );
+    float4 tmp = bendTexture[id.xy];
+    // tmp.w = max( 0, tmp.w - 0.01 );
+    tmp.w = tmp.w * 0.96;
+    tmp.xy = tmp.xy * 0.9;
+    bendTexture[id.xy] = tmp;
+}

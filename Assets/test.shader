@@ -7,12 +7,15 @@ Shader "Custom/test"
       _RenderTex ("RenderTex", 2D) = "black" {}
       _GrassHeight ("GrassHeight", float ) = 1
       _BendStrength ("GrassHeight", float ) = 1
+      _Color ("Color", Color) = (1,1,1,1)
+      _Glossiness ("Smoothness", Range(0,1)) = 0.5
+      _Metallic ("Metallic", Range(0,1)) = 0.0
     }
     SubShader {
 Cull off
       Tags { "RenderType" = "Opaque" }
       CGPROGRAM
-      #pragma surface surf Lambert vertex:vert addshadow fullforwardshadows
+      #pragma surface surf Standard vertex:vert addshadow fullforwardshadows
 
       struct Input
       {
@@ -25,6 +28,9 @@ Cull off
       float3 G_RTCameraPosition;
       float G_RTCameraSize;
       
+      half _Glossiness;
+      half _Metallic;
+      fixed4 _Color;
       sampler2D _MainTex;
       sampler2D _RenderTex;
       float _GrassHeight;
@@ -92,23 +98,13 @@ Cull off
       }
 
 
-      void surf( Input IN, inout SurfaceOutput o )
+      void surf( Input IN, inout SurfaceOutputStandard o )
       {
-          o.Albedo = tex2D( _MainTex, IN.uv_MainTex ).rgb * IN.color.rgb;
+          // o.Albedo = tex2D( _MainTex, IN.uv_MainTex ).rgb * IN.color.rgb;
           o.Albedo = float3( 0, 1, 0 );
-
-          // float2 rtUVs    = ( IN.pos.xz - G_RTCameraPosition.xz ) / ( 2 * G_RTCameraSize ) + float2( .5f, .5f );
-          // float4 tmp      = tex2D( _RenderTex, rtUVs );
-          // float3 bendDir  = float3( tmp.x, 0.00001, tmp.y );
-          // fixed bendStrength = tmp.a;
-          // bendDir         = normalize( bendDir );
-          // bendDir         = mul( unity_WorldToObject, float4( bendDir, 0 ) ).xyz; // maaaaaybe inv(transpose(4x4 mat));
-          // bendDir         = normalize( bendDir );
-          // float normalizedHeight = IN.vertex.y / _GrassHeight;
-          // 
-          // float bendAngle = bendStrength * normalizedHeight;
-          //o.Albedo = float3( bendAngle, 0, 0 );
-          // o.Albedo = float3( bendStrength, 0, 0 );
+          o.Metallic = _Metallic;
+          o.Smoothness = _Glossiness;
+          o.Alpha = 1;
       }
       ENDCG
     }
