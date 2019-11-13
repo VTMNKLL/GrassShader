@@ -40,7 +40,8 @@ public class GrassGenerator : MonoBehaviour {
             {
                 Debug.Log("Hit!! " + i.ToString());
                 origin = hit.point;
-                matrices.Add(Matrix4x4.TRS(origin, Quaternion.identity, Vector3.one));
+                Quaternion rot = Quaternion.identity;//Quaternion.AngleAxis(Random.Range(-180,180),new Vector3(0,1,0));
+                matrices.Add(Matrix4x4.TRS(origin, rot, Vector3.one));
             }
         }
     }

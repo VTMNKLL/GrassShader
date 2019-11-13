@@ -23,7 +23,7 @@ Shader "Toon/Lit Swaying Interactive" {
 
 
 		CGPROGRAM
-#pragma surface surf ToonRamp vertex:vert addshadow keepalpha // addshadow applies shadow after vertex animation
+#pragma surface surf ToonRamp vertex:vert addshadow keepalpha addshadow applies shadow after vertex animation
 
 		sampler2D _Ramp;
 
