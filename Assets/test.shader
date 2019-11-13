@@ -93,23 +93,23 @@ Shader "Custom/test"
 
 		  float x = sin(worldPos.x / _Rigidness + (_Time.x * _Speed));
 		  float z = sin(worldPos.z / _Rigidness + (_Time.x * _Speed));
-		  float3 windBendDir = float3(_Scale * x, 0, _Scale * z);
+		  //float3 windBendDir = float3(_Scale * x, 0, _Scale * z);
 
 		  bendDir = normalize(bendDir);
-		  bendDir += windBendDir;
-		  bendStrength += length(windBendDir);
+		  //bendDir += windBendDir;
+		  //bendStrength += length(windBendDir);
 		  float bendAngle = bendStrength * normalizedHeight;
 
           //bendAxis = float3( 1, 0, 0 );
 
           //bendAngle = 3.14159 / 4;
-          //if (bendDir.y < .5 )
 
-		
-		  if (length(float2(bendDir.x, bendDir.z)) > 0) {
-			  bendDir = normalize(bendDir);
-			  bendDir = mul(unity_WorldToObject, float4(bendDir, 0)).xyz; // maaaaaybe inv(transpose(4x4 mat));
-			  float3 bendAxis = normalize(cross(float3(0, 1, 0), bendDir));
+		  bendDir = normalize(bendDir);
+		  bendDir = mul(unity_WorldToObject, float4(bendDir, 0)).xyz; // maaaaaybe inv(transpose(4x4 mat));
+		  float3 bendAxis = normalize(cross(float3(0, 1, 0), bendDir));
+
+		  if (bendDir.y < .5 ) {
+		  //if (length(float2(bendDir.x, bendDir.z)) > 0) {
 			  v.vertex.xyz = RotateAboutAxis(v.vertex.xyz, bendAxis, bendAngle);
 		  }
           //v.vertex.xyz += bendDir;
