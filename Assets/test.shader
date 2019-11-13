@@ -12,7 +12,7 @@ Shader "Custom/test"
       _Metallic ("Metallic", Range(0,1)) = 0.0
     }
     SubShader {
-Cull off
+      Cull off
       Tags { "RenderType" = "Opaque" }
       CGPROGRAM
       #pragma surface surf Standard vertex:vert addshadow fullforwardshadows
