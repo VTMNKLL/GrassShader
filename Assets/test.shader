@@ -94,14 +94,15 @@ Shader "Custom/test"
           //v.vertex.xyz += bendDir;
           //v.vertex.w = 1;
           //o.color.rgb  = float3( bendStrength, 0, 0 );
-          o.color.rgb = 5.*bendAxis + float3(.5,.5,.5);
+          //o.color.rgb = 5.*bendAxis + float3(.5,.5,.5);
+		  o.color = _Color;
       }
 
 
       void surf( Input IN, inout SurfaceOutputStandard o )
       {
-          // o.Albedo = tex2D( _MainTex, IN.uv_MainTex ).rgb * IN.color.rgb;
-          o.Albedo = float3( 0, 1, 0 );
+          o.Albedo = tex2D( _MainTex, IN.uv_MainTex ).rgb * IN.color.rgb;
+          //o.Albedo = float3( 0, 1, 0 );
           o.Metallic = _Metallic;
           o.Smoothness = _Glossiness;
           o.Alpha = 1;
